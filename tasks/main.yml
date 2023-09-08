@@ -1,0 +1,58 @@
+---
+- name: Create app directory
+  ansible.builtin.file:
+    path: "{{ hoprd_path }}"
+    state: "{{ item }}"
+    mode: 0777
+  with_items:
+    - absent
+    - directory
+- name: "Copy files"
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - src: "{{ hoprd_identity_file }}"
+      dest: "{{ hoprd_path }}/.hoprd.id"
+      owner: "{{ hoprd_user }}"
+      group: "{{ hoprd_group }}"
+      mode: "600"
+    - src: "{{ hoprd_env_file }}"
+      dest: "{{ hoprd_path }}/.env"
+      owner: "{{ hoprd_user }}"
+      group: "{{ hoprd_group }}"
+      mode: "600"
+    - src: ".env-default"
+      dest: "{{ hoprd_path }}/.env-default"
+      owner: "{{ hoprd_user }}"
+      group: "{{ hoprd_group }}"
+      mode: "600"
+    - src: "hoprd.service"
+      dest: "/etc/systemd/system/hoprd.service"
+      owner: "{{ hoprd_user }}"
+      group: "{{ hoprd_group }}"
+      mode: "0644"
+- name: Apply docker-compose
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ hoprd_path }}/docker-compose.yml"
+    owner: "{{ hoprd_user }}"
+    group: "{{ hoprd_group }}"
+    mode: "0640"
+  notify: Restart mysql
+- name: Add HOPRD_HOST
+  lineinfile:
+    dest: "{{ hoprd_path }}/.env"
+    line: "HOPRD_HOST={{ ansible_default_ipv4.address }}:9091"
+    state: present
+- name: reload systemctl
+  ansible.builtin.systemd:
+    daemon_reload: true
+- name: Start Hoprd service
+  ansible.builtin.service:
+    name: "hoprd.service"
+    state: restarted
+    enabled: true
