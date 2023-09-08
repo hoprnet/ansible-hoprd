@@ -41,7 +41,6 @@
     owner: "{{ hoprd_user }}"
     group: "{{ hoprd_group }}"
     mode: "0640"
-  notify: Restart mysql
 - name: Add HOPRD_HOST
   lineinfile:
     dest: "{{ hoprd_path }}/.env"
