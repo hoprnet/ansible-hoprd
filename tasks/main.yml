@@ -5,7 +5,6 @@
     state: "{{ item }}"
     mode: 0777
   with_items:
-    - absent
     - directory
 - name: "Copy files"
   ansible.builtin.copy:
