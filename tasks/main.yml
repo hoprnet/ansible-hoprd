@@ -2,10 +2,8 @@
 - name: Create app directory
   ansible.builtin.file:
     path: "{{ hoprd_path }}"
-    state: "{{ item }}"
+    state: directory
     mode: 0777
-  with_items:
-    - directory
 - name: "Copy files"
   ansible.builtin.copy:
     src: "{{ item.src }}"
@@ -36,8 +34,8 @@
       mode: "0644"
 - name: Apply docker-compose
   ansible.builtin.template:
-    src: docker-compose.yml.j2
-    dest: "{{ hoprd_path }}/docker-compose.yml"
+    src: docker-compose.yaml.j2
+    dest: "{{ hoprd_path }}/docker-compose.yaml"
     owner: "{{ hoprd_user }}"
     group: "{{ hoprd_group }}"
     mode: "0640"
