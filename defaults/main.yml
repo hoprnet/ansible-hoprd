@@ -1,0 +1,4 @@
+hoprd_user: root
+hoprd_group: root
+hoprd_path: "/opt/hoprd"
+hoprd_version: latest

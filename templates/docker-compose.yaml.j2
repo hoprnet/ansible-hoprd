@@ -1,0 +1,71 @@
+---
+version: '3.7'
+networks:
+  hoprnet:
+    name: hoprnet
+services:
+  hoprd:
+    image: europe-west3-docker.pkg.dev/hoprassociation/docker-images/hoprd:{{ hoprd_version }}
+    pull_policy: always
+    mem_reservation: 1g
+    mem_limit: 4g
+    container_name: hoprd
+    hostname: hoprd
+    restart: on-failure
+    networks:
+      - hoprnet
+    ports:
+      - 8080:8080
+      - 9091:9091/tcp
+      - 9091:9091/udp
+      - 3001:3001
+    environment:
+      - DEBUG=hopr*
+    env_file:
+        - .env-default
+        - .env
+    volumes:
+      - '/opt/hoprd:/app/hoprd-db'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    logging:
+      driver: json-file
+      options:
+        max-size: 1000M
+        max-file: 5
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.45.0
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    expose:
+      - 9093
+    ports:
+      - 9093:8080
+    networks:
+      - hoprnet
+    devices:
+      - /dev/kmsg:/dev/kmsg
+  nodeexporter:
+    image: prom/node-exporter:v1.4.0
+    container_name: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    expose:
+      - 9100
+    ports:
+      - 9100:9100
+    networks:
+      - hoprnet

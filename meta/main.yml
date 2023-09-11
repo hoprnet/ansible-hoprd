@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: Hopr
+  namespace: hopr
+  role_name: hoprd
+  description: Setup Hoprd
+  company: Hopr
+  license: "GNU General Public License v3.0"
+  min_ansible_version: "2.1"
+  galaxy_tags: []
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
