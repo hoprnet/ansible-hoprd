@@ -39,10 +39,13 @@
     owner: "{{ hoprd_user }}"
     group: "{{ hoprd_group }}"
     mode: "0640"
+- name: Get my public IP
+  community.general.ipify_facts:
+  register: public_ip
 - name: Add HOPRD_HOST
   lineinfile:
     dest: "{{ hoprd_path }}/.env"
-    line: "HOPRD_HOST={{ ansible_default_ipv4.address }}:9091"
+    line: "HOPRD_HOST={{ public_ip.ipify_public_ip }}:9091"
     state: present
 - name: reload systemctl
   ansible.builtin.systemd:
