@@ -50,7 +50,7 @@
   community.general.ipify_facts:
 - name: Add HOPRD_HOST
   lineinfile:
-    dest: "{{ hoprd_path }}/.env"
+    dest: "{{ hoprd_path }}/.env-hoprd"
     line: "HOPRD_HOST={{ ipify_public_ip }}:9091"
     state: present
 - name: reload systemctl
