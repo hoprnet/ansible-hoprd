@@ -18,7 +18,7 @@
       group: "{{ hoprd_group }}"
       mode: "600"
     - src: "{{ hoprd_env_file }}"
-      dest: "{{ hoprd_path }}/.env"
+      dest: "{{ hoprd_path }}/.env-hoprd"
       owner: "{{ hoprd_user }}"
       group: "{{ hoprd_group }}"
       mode: "600"
@@ -36,6 +36,13 @@
   ansible.builtin.template:
     src: docker-compose.yaml.j2
     dest: "{{ hoprd_path }}/docker-compose.yaml"
+    owner: "{{ hoprd_user }}"
+    group: "{{ hoprd_group }}"
+    mode: "0640"
+- name: Apply env file
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ hoprd_path }}/.env"
     owner: "{{ hoprd_user }}"
     group: "{{ hoprd_group }}"
     mode: "0640"

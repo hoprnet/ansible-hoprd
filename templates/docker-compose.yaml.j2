@@ -5,7 +5,7 @@ networks:
     name: hoprnet
 services:
   hoprd:
-    image: europe-west3-docker.pkg.dev/hoprassociation/docker-images/hoprd:{{ hoprd_version }}
+    image: europe-west3-docker.pkg.dev/hoprassociation/docker-images/hoprd:${HOPRD_VERSION}
     pull_policy: always
     mem_reservation: 1g
     mem_limit: 4g
@@ -23,7 +23,7 @@ services:
       - DEBUG=hopr*
     env_file:
         - .env-default
-        - .env
+        - .env-hoprd
     volumes:
       - '/opt/hoprd:/app/hoprd-db'
       - '/var/run/docker.sock:/var/run/docker.sock'
