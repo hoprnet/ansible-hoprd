@@ -21,7 +21,6 @@ services:
       - 3001:3001
     environment:
       - DEBUG=hopr*
-      - HOPRD_CONFIGURATION_FILE_PATH=/opt/hoprd/config.yaml
     env_file:
         - .env-hoprd
     volumes:
