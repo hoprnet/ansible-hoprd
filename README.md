@@ -17,8 +17,12 @@ How to install Linux on Dedicated server
         name: hopr.hoprd
       vars::
         hoprd_identity_file: /path/to/identity_file/.hoprd.id
-        hoprd_env_file: /path/to/identity_file/.env
-        hoprd_version: 2.0.0-rc.2
+        hoprd_version: 2.0.0-rc.10
+        hoprd_network: rotsee
+        hoprd_password: SomePassword
+        hoprd_api_token: SomeAPI
+        hoprd_safe_address: 0xf40224307B63dd5b2Dd166630d76dfC37bb78EeA
+        hoprd_module_address: 0x0224307B63dd5b2Dd166630d76dfC37bb7eA8Ef4
 ```
 
 

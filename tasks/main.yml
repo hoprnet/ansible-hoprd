@@ -8,51 +8,38 @@
   ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "{{ item.owner }}"
-    group: "{{ item.group }}"
+    owner: "{{ hoprd_user }}"
+    group: "{{ hoprd_group }}"
     mode: "{{ item.mode }}"
   with_items:
     - src: "{{ hoprd_identity_file }}"
       dest: "{{ hoprd_path }}/.hoprd.id"
-      owner: "{{ hoprd_user }}"
-      group: "{{ hoprd_group }}"
-      mode: "600"
-    - src: "{{ hoprd_env_file }}"
-      dest: "{{ hoprd_path }}/.env-hoprd"
-      owner: "{{ hoprd_user }}"
-      group: "{{ hoprd_group }}"
-      mode: "600"
-    - src: ".env-default"
-      dest: "{{ hoprd_path }}/.env-default"
-      owner: "{{ hoprd_user }}"
-      group: "{{ hoprd_group }}"
       mode: "600"
     - src: "hoprd.service"
       dest: "/etc/systemd/system/hoprd.service"
-      owner: "{{ hoprd_user }}"
-      group: "{{ hoprd_group }}"
       mode: "0644"
-- name: Apply docker-compose
-  ansible.builtin.template:
-    src: docker-compose.yaml.j2
-    dest: "{{ hoprd_path }}/docker-compose.yaml"
-    owner: "{{ hoprd_user }}"
-    group: "{{ hoprd_group }}"
-    mode: "0640"
-- name: Apply env file
-  ansible.builtin.template:
-    src: .env.j2
-    dest: "{{ hoprd_path }}/.env"
-    owner: "{{ hoprd_user }}"
-    group: "{{ hoprd_group }}"
-    mode: "0640"
 - name: Get my public IP
   community.general.ipify_facts:
-- name: Add HOPRD_HOST
-  lineinfile:
-    dest: "{{ hoprd_path }}/.env-hoprd"
-    line: "HOPRD_HOST={{ ipify_public_ip }}:9091"
-    state: present
+- name: Apply Templates
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ hoprd_user }}"
+    group: "{{ hoprd_group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - src: docker-compose.yaml.j2
+      dest: "{{ hoprd_path }}/docker-compose.yaml"
+      mode: "0640"
+    - src: hoprd-config.yaml.j2
+      dest: "{{ hoprd_path }}/config.yaml"
+      mode: "0640"
+    - src: .env.j2
+      dest: "{{ hoprd_path }}/.env"
+      mode: "0640"
+    - src: .env-hoprd.j2
+      dest: "{{ hoprd_path }}/.env-hoprd"
+      mode: "0640"
 - name: reload systemctl
   ansible.builtin.systemd:
     daemon_reload: true
