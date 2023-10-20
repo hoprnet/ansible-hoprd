@@ -4,7 +4,7 @@ host:
   port: 9091
 identity:
   file: "/app/hoprd-db/.hoprd.id"
-  password: {{ hoprd_password }}
+  password: "{{ hoprd_password }}"
   private_key:
 db:
   data: "/app/hoprd-db"
@@ -17,7 +17,7 @@ inbox:
   - 0
 api:
   enable: true
-  auth: !Token {{ hoprd_api_token }}
+  auth: !Token "{{ hoprd_api_token }}"
   host:
     address: !IPv4 0.0.0.0
     port: 3001
