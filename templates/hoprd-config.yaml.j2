@@ -27,16 +27,16 @@ strategy:
   finalize_channel_closure: true
   strategies:
     - !Promiscuous
-      max_channels: 10
-      new_channel_stake: '100000 HOPR' # 1000 tickets
-      network_quality_threshold: 0.4
-      minimum_node_balance: '1000000 HOPR' # 10x new channel stake
+      max_channels: {{ hoprd.confg.strategy.promiscuous.max_channels }}
+      new_channel_stake: "{{ hoprd.confg.strategy.promiscuous.max_channels }}"
+      network_quality_threshold: 0.8
+      minimum_node_balance: "{{ hoprd.confg.strategy.promiscuous.minimum_node_balance }}"
       enforce_max_channels: true
     - !AutoFunding
-      funding_amount: '100000 HOPR' # 1000 tickets
-      min_stake_threshold: '10000 HOPR' # 100 tickets
+      funding_amount: "{{ hoprd.confg.strategy.autoFunding.funding_amount }}"
+      min_stake_threshold: "{{ hoprd.confg.strategy.autoFunding.min_stake_threshold }}"
     - !Aggregating
-      aggregation_threshold: 100
+      aggregation_threshold: "{{ hoprd.confg.strategy.aggregating.aggregation_threshold }}"
       unrealized_balance_ratio: 0.9
       aggregation_timeout: 60
       aggregate_on_channel_close: true
