@@ -36,7 +36,7 @@ strategy:
       funding_amount: "{{ hoprd.config.strategy.autoFunding.funding_amount }}"
       min_stake_threshold: "{{ hoprd.config.strategy.autoFunding.min_stake_threshold }}"
     - !Aggregating
-      aggregation_threshold: "{{ hoprd.config.strategy.aggregating.aggregation_threshold }}"
+      aggregation_threshold: {{ hoprd.config.strategy.aggregating.aggregation_threshold }}
       unrealized_balance_ratio: 0.9
       aggregation_timeout: 60
       aggregate_on_channel_close: true
