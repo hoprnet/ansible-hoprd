@@ -8,10 +8,10 @@ hoprd:
     strategy:
       promiscuous:
         max_channels: 10
-        new_channel_stake: '100000 HOPR'  # 1000 tickets
-        minimum_node_balance: '1000000 HOPR' # 10x new channel stake
+        new_channel_stake: "100000 HOPR"  # 1000 tickets
+        minimum_node_balance: "1000000 HOPR" # 10x new channel stake
       autoFunding:
-        funding_amount: '100000 HOPR' # 1000 tickets
-        min_stake_threshold: '10000 HOPR' # 100 tickets
+        funding_amount: "100000 HOPR" # 1000 tickets
+        min_stake_threshold: "10000 HOPR" # 100 tickets
       aggregating:
         aggregation_threshold: 100

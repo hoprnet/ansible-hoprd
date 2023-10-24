@@ -28,7 +28,7 @@ strategy:
   strategies:
     - !Promiscuous
       max_channels: {{ hoprd.config.strategy.promiscuous.max_channels }}
-      new_channel_stake: "{{ hoprd.config.strategy.promiscuous.max_channels }}"
+      new_channel_stake: "{{ hoprd.config.strategy.promiscuous.new_channel_stake }}"
       network_quality_threshold: 0.8
       minimum_node_balance: "{{ hoprd.config.strategy.promiscuous.minimum_node_balance }}"
       enforce_max_channels: true
