@@ -28,8 +28,8 @@ strategy:
   strategies:
     - !Promiscuous
       max_channels: {{ hoprd.config.strategy.promiscuous.max_channels }}
+      network_quality_threshold: {{ hoprd.config.strategy.promiscuous.network_quality_threshold }}
       new_channel_stake: "{{ hoprd.config.strategy.promiscuous.new_channel_stake }}"
-      network_quality_threshold: 0.8
       minimum_node_balance: "{{ hoprd.config.strategy.promiscuous.minimum_node_balance }}"
       enforce_max_channels: true
     - !AutoFunding
@@ -41,7 +41,7 @@ strategy:
       aggregation_timeout: 60
       aggregate_on_channel_close: true
     - !AutoRedeeming
-      redeem_only_aggregated: true
+      redeem_only_aggregated: {{ hoprd.config.strategy.autoRedeeming.redeem_only_aggregated }}
 heartbeat:
   variance: 2000
   interval: 20000
