@@ -26,22 +26,30 @@ strategy:
   allow_recursive: false
   finalize_channel_closure: true
   strategies:
+{% if hoprd.config.strategy.promiscuous.enabled %}
     - !Promiscuous
       max_channels: {{ hoprd.config.strategy.promiscuous.max_channels }}
       network_quality_threshold: {{ hoprd.config.strategy.promiscuous.network_quality_threshold }}
       new_channel_stake: "{{ hoprd.config.strategy.promiscuous.new_channel_stake }}"
       minimum_node_balance: "{{ hoprd.config.strategy.promiscuous.minimum_node_balance }}"
       enforce_max_channels: true
+{% endif %}
+{% if hoprd.config.strategy.autoFunding.enabled %}
     - !AutoFunding
       funding_amount: "{{ hoprd.config.strategy.autoFunding.funding_amount }}"
       min_stake_threshold: "{{ hoprd.config.strategy.autoFunding.min_stake_threshold }}"
+{% endif %}
+{% if hoprd.config.strategy.aggregating.enabled %}
     - !Aggregating
       aggregation_threshold: {{ hoprd.config.strategy.aggregating.aggregation_threshold }}
       unrealized_balance_ratio: 0.9
       aggregation_timeout: 60
       aggregate_on_channel_close: true
+{% endif %}
+{% if hoprd.config.strategy.autoRedeeming.enabled %}
     - !AutoRedeeming
       redeem_only_aggregated: {{ hoprd.config.strategy.autoRedeeming.redeem_only_aggregated }}
+{% endif %}
 heartbeat:
   variance: 2000
   interval: 20000
