@@ -7,14 +7,18 @@ hoprd:
   config:
     strategy:
       promiscuous:
+        enabled: true
         max_channels: 10
         network_quality_threshold: 0.8
         new_channel_stake: "1000000 HOPR"  # 1000 tickets
         minimum_node_balance: "10000000 HOPR" # 10x new channel stake
       autoFunding:
+        enabled: true
         funding_amount: "1000000 HOPR" # 1000 tickets
         min_stake_threshold: "100000 HOPR" # 100 tickets
       aggregating:
+        enabled: true
         aggregation_threshold: 1000
       autoRedeeming:
+        enabled: true
         redeem_only_aggregated: true
