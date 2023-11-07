@@ -32,7 +32,7 @@ strategy:
       network_quality_threshold: {{ hoprd.config.strategy.promiscuous.network_quality_threshold }}
       new_channel_stake: "{{ hoprd.config.strategy.promiscuous.new_channel_stake }}"
       minimum_node_balance: "{{ hoprd.config.strategy.promiscuous.minimum_node_balance }}"
-      min_network_size_samples: "{{ hoprd.config.strategy.promiscuous.min_network_size_samples }}"
+      min_network_size_samples: {{ hoprd.config.strategy.promiscuous.min_network_size_samples }}
       enforce_max_channels: true
 {% endif %}
 {% if hoprd.config.strategy.autoFunding.enabled %}
