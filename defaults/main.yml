@@ -12,6 +12,7 @@ hoprd:
         network_quality_threshold: 0.8
         new_channel_stake: "1000000 HOPR"  # 1000 tickets
         minimum_node_balance: "10000000 HOPR" # 10x new channel stake
+        min_network_size_samples: 10
       autoFunding:
         enabled: true
         funding_amount: "1000000 HOPR" # 1000 tickets
