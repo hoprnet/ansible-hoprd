@@ -23,3 +23,5 @@ hoprd:
       autoRedeeming:
         enabled: true
         redeem_only_aggregated: true
+    network_options:
+      quality_avg_window_size: 50

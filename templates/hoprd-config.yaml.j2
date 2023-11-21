@@ -58,7 +58,7 @@ heartbeat:
 network_options:
   min_delay: 1
   max_delay: 300
-  quality_avg_window_size: 25
+  quality_avg_window_size: {{ hoprd.config.network_options.quality_avg_window_size }}
   quality_bad_threshold: 0.2
   quality_offline_threshold: 0.5
   quality_step: 0.1
