@@ -1,7 +1,7 @@
 ---
 - name: Create app directory
   ansible.builtin.file:
-    path: "{{ hoprd_path }}"
+    path: "{{ hoprd_path }}/hoprd-db"
     state: directory
     mode: 0777
 - name: "Copy files"
@@ -31,8 +31,8 @@
     - src: docker-compose.yaml.j2
       dest: "{{ hoprd_path }}/docker-compose.yaml"
       mode: "0640"
-    - src: hoprd-config.yaml.j2
-      dest: "{{ hoprd_path }}/config.yaml"
+    - src: hoprd.cfg.yaml.j2
+      dest: "{{ hoprd_path }}/hoprd.cfg.yaml"
       mode: "0640"
     - src: .env.j2
       dest: "{{ hoprd_path }}/.env"
