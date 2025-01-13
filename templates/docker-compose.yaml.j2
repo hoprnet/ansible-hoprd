@@ -79,7 +79,7 @@ services:
     hostname: metricspusher
     command: /bin/sh /app/metricspusher.sh ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}
     volumes:
-      - ./prometheus/metricspusher.sh:/app/metricspusher.sh
+      - ./metricspusher.sh:/app/metricspusher.sh
     networks:
       - hoprnet
     env_file:

@@ -18,6 +18,9 @@
     - src: "hoprd.service"
       dest: "/etc/systemd/system/hoprd.service"
       mode: "0644"
+    - src: "metricspusher.sh"
+      dest: "/opt/hoprd/metricspusher.sh"
+      mode: "0774"
 - name: Get my public IP
   community.general.ipify_facts:
 - name: Apply Templates
