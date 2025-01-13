@@ -6,14 +6,14 @@ if [ -z "${HOPRD_API_TOKEN}" ]; then
   exit 1
 fi
 
-if [ -z "${HOPRNET_PROMETHEUS_PUSHGATEWAY_KEY}" ]; then
-  echo "Error: HOPRNET_PROMETHEUS_PUSHGATEWAY_KEY is not set. Get it from Bitwarden Secret "Prometheus Pushgateway Hoprd Node""
+if [ -z "${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY}" ]; then
+  echo "Error: HOPRD_PROMETHEUS_PUSHGATEWAY_KEY is not set. Get it from Bitwarden Secret "Prometheus Pushgateway Hoprd Node""
   exit 1
 fi
 
-HOPRNET_PROMETHEUS_PUSHGATEWAY_URL=${1}
-if [ -z "${HOPRNET_PROMETHEUS_PUSHGATEWAY_URL}" ]; then
-  echo "Error: HOPRNET_PROMETHEUS_PUSHGATEWAY_URL argument is required"
+HOPRD_PROMETHEUS_PUSHGATEWAY_URL=${1}
+if [ -z "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}" ]; then
+  echo "Error: HOPRD_PROMETHEUS_PUSHGATEWAY_URL argument is required"
   exit 1
 fi
 
@@ -28,8 +28,8 @@ while true; do
   fi
 
   # Push metrics with timeout
-  if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRNET_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRNET_PROMETHEUS_PUSHGATEWAY_URL}"; then
-    echo "Error: Failed to push metrics to ${HOPRNET_PROMETHEUS_PUSHGATEWAY_URL}"
+  if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
+    echo "Error: Failed to push metrics to ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"
   fi
   sleep 15
 done

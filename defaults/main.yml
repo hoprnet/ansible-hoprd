@@ -9,6 +9,12 @@ hoprd_log_level: "info,libp2p_swarm=info,libp2p_mplex=info,multistream_select=in
 hoprd_log_max_size: 1000M
 hoprd_resources_memory_requests: 1g
 hoprd_resources_memory_limits: 2g
+hoprd_namespace: external
+hoprd_node_name: my-node
+hoprd_peer_id: unknown
+hoprd_native_address: unknown
+hoprd_prometheus_pushgateway_url:
+
 
 hoprd_config: |
   hopr:

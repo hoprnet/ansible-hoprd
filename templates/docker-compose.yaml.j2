@@ -77,7 +77,7 @@ services:
     image: curlimages/curl:latest
     container_name: metricspusher
     hostname: metricspusher
-    command: /bin/sh /app/metricspusher.sh ${HOPRNET_PROMETHEUS_PUSHGATEWAY_URL}
+    command: /bin/sh /app/metricspusher.sh ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}
     volumes:
       - ./prometheus/metricspusher.sh:/app/metricspusher.sh
     networks:
