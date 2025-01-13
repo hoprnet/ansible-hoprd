@@ -16,6 +16,7 @@ How to install Linux
       ansible.builtin.include_role:
         name: hopr.hoprd
       vars::
+        hoprd_node_name: my-first-node
         hoprd_identity_file: /path/to/identity_file/.hoprd.id
         hoprd_version: 2.0.0-rc.10
         hoprd_network: rotsee
@@ -23,12 +24,16 @@ How to install Linux
         hoprd_api_token: SomeAPI
         hoprd_safe_address: 0xf40224307B63dd5b2Dd166630d76dfC37bb78EeA
         hoprd_module_address: 0x0224307B63dd5b2Dd166630d76dfC37bb7eA8Ef4
+        hoprd_peer_id: 12D3KooWPehWqHaxiVdsZ2VzrLhmK7p94ak69moZyt6F1dua9Mei
+        hoprd_native_address: 0xCCC009dC0172Cc046E92B713eC591A1aca90e410
         hoprd_session_port_start: 10000
         hoprd_session_port_end: 11000
         hoprd_log_level: "info,libp2p_swarm=info,libp2p_mplex=info,multistream_select=info,isahc=error,sea_orm=warn,sqlx=warn,hyper_util=warn,libp2p_tcp=info,libp2p_dns=info,hickory_resolver=warn"
         hoprd_log_max_size: 1000M
         hoprd_resources_memory_requests: 1g
         hoprd_resources_memory_limits: 2g
+        hoprnet_prometheus_pushgateway_url: https://prometheus-pushgateway.staging.hoprnet.link/metrics
+        hoprnet_prometheus_pushgateway_key: <Bitwarden Secret "Prometheus Pushgateway Hoprd Node">
 ```
 
 

@@ -27,7 +27,7 @@ services:
       - ${HOPRD_SESSION_PORT_RANGE}:${HOPRD_SESSION_PORT_RANGE}/udp
       - 3001:3001
     env_file:
-        - .env-hoprd
+        - .env-secrets
     volumes:
       - '/opt/hoprd:/app'
       - '/var/run/docker.sock:/var/run/docker.sock'
@@ -73,3 +73,14 @@ services:
       - 9100:9100
     networks:
       - hoprnet
+  metricspusher:
+    image: curlimages/curl:latest
+    container_name: metricspusher
+    hostname: metricspusher
+    command: /bin/sh /app/metricspusher.sh ${HOPRNET_PROMETHEUS_PUSHGATEWAY_URL}
+    volumes:
+      - ./prometheus/metricspusher.sh:/app/metricspusher.sh
+    networks:
+      - hoprnet
+    env_file:
+      - .env-secrets

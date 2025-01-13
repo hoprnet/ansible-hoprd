@@ -37,8 +37,8 @@
     - src: .env.j2
       dest: "{{ hoprd_path }}/.env"
       mode: "0640"
-    - src: .env-hoprd.j2
-      dest: "{{ hoprd_path }}/.env-hoprd"
+    - src: .env-secrets.j2
+      dest: "{{ hoprd_path }}/.env-secrets"
       mode: "0640"
 - name: reload systemctl
   ansible.builtin.systemd:
