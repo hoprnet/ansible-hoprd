@@ -3,6 +3,7 @@ networks:
   hoprnet:
     name: hoprnet
     driver: bridge
+    external: true
 services:
   hoprd:
     image: europe-west3-docker.pkg.dev/hoprassociation/docker-images/hoprd:${HOPRD_VERSION}
