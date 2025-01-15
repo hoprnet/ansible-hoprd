@@ -15,7 +15,6 @@ hoprd_peer_id: unknown
 hoprd_native_address: unknown
 hoprd_prometheus_pushgateway_url:
 
-
 hoprd_config: |
   hopr:
     chain:

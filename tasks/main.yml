@@ -15,12 +15,16 @@
     - src: "{{ hoprd_identity_file }}"
       dest: "{{ hoprd_path }}/.hoprd.id"
       mode: "600"
+    - src: "{{ hoprd_fluentbit_sa_file }}"
+      dest: "{{ hoprd_path }}/fluent-bit-gcp-sa.json"
+      mode: "600"
     - src: "hoprd.service"
       dest: "/etc/systemd/system/hoprd.service"
       mode: "0644"
     - src: "metricspusher.sh"
       dest: "/opt/hoprd/metricspusher.sh"
       mode: "0774"
+  when: item.src is defined and item.src | length > 0
 - name: Get my public IP
   community.general.ipify_facts:
 - name: Apply Templates
@@ -42,6 +46,12 @@
       mode: "0640"
     - src: .env-secrets.j2
       dest: "{{ hoprd_path }}/.env-secrets"
+      mode: "0640"
+    - src: fluent-bit.conf.j2
+      dest: "{{ hoprd_path }}/fluent-bit.conf"
+      mode: "0640"
+    - src: custom_parsers.conf.j2
+      dest: "{{ hoprd_path }}/custom_parsers.conf"
       mode: "0640"
 - name: reload systemctl
   ansible.builtin.systemd:

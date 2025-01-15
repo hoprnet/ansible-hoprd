@@ -1,0 +1,78 @@
+[SERVICE]
+    Daemon Off
+    Flush 1
+    Log_Level info
+    Parsers_File /fluent-bit/etc/parsers.conf
+    Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+    HTTP_Server On
+    HTTP_Listen 0.0.0.0
+    HTTP_Port 2020
+    Health_Check On
+[INPUT]
+    Name        tail
+    Path        /var/lib/docker/containers/*/*.log
+    Parser      docker
+    # DB          /var/log/fluent-bit-k8s-container.db
+    # Mem_Buf_Limit 20MB
+    # Skip_Long_Lines On
+# Remove stream and time keys
+[FILTER]
+    Name        modify
+    Match       *
+    Remove_Key  stream
+    Remove_Key  time
+# Exclude verbose entry logs
+[FILTER]
+    Name         grep
+    Match        *
+    Exclude      log \/healthyz
+    Exclude      log \/readyz
+    Exclude      log \/api\/v3\/node\/metrics
+    Exclude      log \/api\/v3\/messages\/peek-all
+# Limit the amount of messages to 45 lines per 10 seconds per node
+[FILTER]
+    Name         throttle
+    Match        docker.*
+    Rate         45 # Amount of messages for the time interval.
+    Window       6 # Amount of intervals to calculate average over
+    Interval     10s
+# Nest fields
+[FILTER]
+    Name nest
+    Match *
+    Operation lift
+    Add_prefix fields_
+    Nested_under fields
+[FILTER]
+    Name modify
+    Match *
+    Rename fields_message message
+[FILTER]
+    Name nest
+    Match *
+    Operation nest
+    Wildcard fields_*
+    Remove_prefix fields_
+    Nest_under fields
+# Remove unnecessary fields
+[FILTER]
+    Name         record_modifier
+    Match        routing.*
+    Remove_key   log
+    Remove_key   fields.message
+    Remove_key   container_hash
+    Remove_key   docker_id
+
+[OUTPUT]
+    Name       stackdriver
+    Match      *
+    Resource     generic_node
+    Google_Service_Account_Credentials /var/secrets/google/google-fluentbit-sa.json
+    Log_Name     horpd-logs
+    export_to_project_id {{ hoprd_log_explorer_project_id }}
+    project_id_key {{ hoprd_log_explorer_project_id }}
+    labels_key labels
+    severity_key level
+[OUTPUT]
+    Name       stdout
+    Match      output.*

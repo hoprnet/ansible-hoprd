@@ -33,10 +33,10 @@ services:
       - '/opt/hoprd:/app'
       - '/var/run/docker.sock:/var/run/docker.sock'
     logging:
-      driver: json-file
+      driver: fluentd
       options:
-        max-size: "${HOPRD_LOG_MAX_SIZE}"
-        max-file: 5
+        fluentd-address: fluentbit:24224
+        tag: docker.app
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.49.2
     container_name: cadvisor
@@ -85,3 +85,23 @@ services:
       - hoprnet
     env_file:
       - .env-secrets
+  fluentbit:
+    image: cr.fluentbit.io/fluent/fluent-bit:3.0.2 
+    container_name: fluentbit
+    hostname: fluentbit
+    command: /fluent-bit/bin/fluent-bit
+    args:
+      - --workdir=/fluent-bit/etc 
+      - --config=/fluent-bit/etc/conf/fluent-bit.conf 
+    volumes:
+      - "./fluent-bit-gcp-sa.json:/var/secrets/google/google-fluentbit-sa.json:ro"
+      - "./custom_parsers.conf:/fluent-bit/etc/conf/custom_parsers.conf:ro"
+      - "./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro"
+    networks:
+      - hoprnet
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/var/secrets/google/google-fluentbit-sa.json
+    restart: always

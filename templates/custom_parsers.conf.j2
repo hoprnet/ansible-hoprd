@@ -1,0 +1,23 @@
+# Parses the time for text logs
+[PARSER]
+  Name        log_time_parser_regex
+  Format      regex
+  Regex       ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{5,9}Z stdout F \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3,6}Z\s+(?<log>.*)$
+  Time_Key    time
+  Time_Format %Y-%m-%dT%H:%M:%S.%L
+# Parses the fields for hoprd logs
+[PARSER]
+  Name        log_hoprd_parser
+  Format      regex
+  Regex        ^(?<level>\w+)\sThreadId\((?<threadId>\d+)\)\s(?<target>[a-zA-Z0-9-_:]+)(?<log>.*)
+# Parses the fields for kube tags
+[PARSER]
+    Name    kube-tag
+    Format  regex
+    Regex   ^(?<namespace_name>[^_]+)\.(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.(?<container_name>.+)
+[PARSER]
+    Name           json_extractor
+    Format         regex
+    Regex          ^[^ ]+\s+(stdout|stderr)\s+F\s+(?<json_log>{.*})$
+    Time_Key       timestamp
+    Time_Format    %Y-%m-%dT%H:%M:%S.%LZ
