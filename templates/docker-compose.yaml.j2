@@ -3,7 +3,6 @@ networks:
   hoprnet:
     name: hoprnet
     driver: bridge
-    external: true
 services:
   hoprd:
     image: europe-west3-docker.pkg.dev/hoprassociation/docker-images/hoprd:${HOPRD_VERSION}
@@ -28,15 +27,12 @@ services:
       - ${HOPRD_SESSION_PORT_RANGE}:${HOPRD_SESSION_PORT_RANGE}/udp
       - 3001:3001
     env_file:
-        - .env-secrets
+        - .env-hoprd
     volumes:
       - '/opt/hoprd:/app'
       - '/var/run/docker.sock:/var/run/docker.sock'
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: fluentbit:24224
-        tag: docker.app
+    depends_on:
+      - fluentbit
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.49.2
     container_name: cadvisor
@@ -84,16 +80,20 @@ services:
     networks:
       - hoprnet
     env_file:
-      - .env-secrets
+      - .env-hoprd
+    depends_on:
+      - hoprd
   fluentbit:
     image: cr.fluentbit.io/fluent/fluent-bit:3.0.2 
     container_name: fluentbit
     hostname: fluentbit
-    command: /fluent-bit/bin/fluent-bit
-    args:
-      - --workdir=/fluent-bit/etc 
-      - --config=/fluent-bit/etc/conf/fluent-bit.conf 
+    command: >
+      /fluent-bit/bin/fluent-bit
+      --workdir=/fluent-bit/etc
+      --config=/fluent-bit/etc/fluent-bit.conf
     volumes:
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"  # Mount Docker logs
+      - "/etc/machine-id:/etc/machine-id:ro"  # Mount machine-id
       - "./fluent-bit-gcp-sa.json:/var/secrets/google/google-fluentbit-sa.json:ro"
       - "./custom_parsers.conf:/fluent-bit/etc/conf/custom_parsers.conf:ro"
       - "./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro"
@@ -105,3 +105,9 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/var/secrets/google/google-fluentbit-sa.json
     restart: always
+    user: root
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 24224 || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5

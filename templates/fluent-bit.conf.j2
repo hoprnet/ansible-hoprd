@@ -17,7 +17,7 @@
     # Skip_Long_Lines On
 # Remove stream and time keys
 [FILTER]
-    Name        modify
+    Name        record_modifier
     Match       *
     Remove_Key  stream
     Remove_Key  time
@@ -57,7 +57,7 @@
 # Remove unnecessary fields
 [FILTER]
     Name         record_modifier
-    Match        routing.*
+    Match        *
     Remove_key   log
     Remove_key   fields.message
     Remove_key   container_hash
@@ -67,8 +67,11 @@
     Name       stackdriver
     Match      *
     Resource     generic_node
-    Google_Service_Account_Credentials /var/secrets/google/google-fluentbit-sa.json
-    Log_Name     horpd-logs
+    Namespace    gnosisvpn
+    Location     europe-west3
+    Node_Id      {{ hoprd_node_name }}
+    Google_Service_Credentials /var/secrets/google/google-fluentbit-sa.json
+    Log_Name_Key     horpd-logs
     export_to_project_id {{ hoprd_log_explorer_project_id }}
     project_id_key {{ hoprd_log_explorer_project_id }}
     labels_key labels

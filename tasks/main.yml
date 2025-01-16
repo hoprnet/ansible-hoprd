@@ -44,8 +44,8 @@
     - src: .env.j2
       dest: "{{ hoprd_path }}/.env"
       mode: "0640"
-    - src: .env-secrets.j2
-      dest: "{{ hoprd_path }}/.env-secrets"
+    - src: .env-hoprd.j2
+      dest: "{{ hoprd_path }}/.env-hoprd"
       mode: "0640"
     - src: fluent-bit.conf.j2
       dest: "{{ hoprd_path }}/fluent-bit.conf"
