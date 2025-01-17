@@ -50,9 +50,6 @@
     - src: fluent-bit.conf.j2
       dest: "{{ hoprd_path }}/fluent-bit.conf"
       mode: "0640"
-    - src: custom_parsers.conf.j2
-      dest: "{{ hoprd_path }}/custom_parsers.conf"
-      mode: "0640"
 - name: reload systemctl
   ansible.builtin.systemd:
     daemon_reload: true

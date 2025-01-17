@@ -34,7 +34,7 @@ services:
     depends_on:
       - fluentbit
     labels:
-      - container: hoprd
+      - "container=hoprd"
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.49.2
     container_name: cadvisor
@@ -53,6 +53,8 @@ services:
       - hoprnet
     devices:
       - /dev/kmsg:/dev/kmsg
+    labels:
+      - "container=cadvisor"
   nodeexporter:
     image: prom/node-exporter:v1.8.2
     container_name: nodeexporter
@@ -72,6 +74,8 @@ services:
       - 9100:9100
     networks:
       - hoprnet
+    labels:
+      - "container=nodeexporter"
   metricspusher:
     image: curlimages/curl:latest
     container_name: metricspusher
@@ -85,6 +89,8 @@ services:
       - .env-hoprd
     depends_on:
       - hoprd
+    labels:
+      - "container=metricspusher"
   fluentbit:
     image: cr.fluentbit.io/fluent/fluent-bit:3.0.2 
     container_name: fluentbit
@@ -95,15 +101,14 @@ services:
       --config=/fluent-bit/etc/fluent-bit.conf
     volumes:
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"  # Mount Docker logs
-      - "/etc/machine-id:/etc/machine-id:ro"  # Mount machine-id
+      - "/var/run/docker.sock:/var/run/docker.sock"
       - "./fluent-bit-gcp-sa.json:/var/secrets/google/google-fluentbit-sa.json:ro"
-      - "./custom_parsers.conf:/fluent-bit/etc/conf/custom_parsers.conf:ro"
       - "./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro"
     networks:
       - hoprnet
     ports:
-      - "24224:24224"
-      - "24224:24224/udp"
+      - "2020:2020"
+      - "2021:2021"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/var/secrets/google/google-fluentbit-sa.json
     restart: always
@@ -113,3 +118,5 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    labels:
+      - "container=fluentbit"
