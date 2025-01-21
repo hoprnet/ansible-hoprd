@@ -11,6 +11,7 @@ hoprd_resources_memory_requests: 1g
 hoprd_resources_memory_limits: 2g
 hoprd_namespace: external
 hoprd_node_name: my-node
+hoprd_location: worldwide # Set a GCP region
 hoprd_peer_id: unknown
 hoprd_native_address: unknown
 hoprd_prometheus_pushgateway_url:

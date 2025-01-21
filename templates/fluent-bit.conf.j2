@@ -78,7 +78,7 @@
     Match      docker.*
     Resource     generic_node
     Namespace    gnosisvpn
-    Location     europe-west3
+    Location     {{ hoprd_location }}
     Node_Id      {{ hoprd_node_name }}
     Google_Service_Credentials /var/secrets/google/google-fluentbit-sa.json
     Log_Name_Key     horpd-logs
