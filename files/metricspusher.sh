@@ -11,7 +11,7 @@ if [ -z "${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY}" ]; then
   exit 1
 fi
 
-HOPRD_PROMETHEUS_PUSHGATEWAY_URL=${1}
+HOPRD_PROMETHEUS_PUSHGATEWAY_URL="${1}"
 if [ -z "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}" ]; then
   echo "Error: HOPRD_PROMETHEUS_PUSHGATEWAY_URL argument is required"
   exit 1
@@ -23,9 +23,14 @@ while true; do
   # Add timeout and retry with backoff
   if ! metrics=$(curl -s --max-time 10 -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/node/metrics"); then
     echo "Error: Failed to fetch metrics from Hoprd API"
-    sleep 5
-    continue
   fi
+
+  if ! hopr_safe_allowance=$(curl -s --max-time 10 -H 'accept: application/json' -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/account/balances" | jq -r '.safeHoprAllowance'); then
+    echo "Error: Failed to fetch Hopr node balances"
+  fi
+
+  # Append the new metric entry
+  metrics+="\nhopr_safe_allowance ${hopr_safe_allowance}"
 
   # Push metrics with timeout
   if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
