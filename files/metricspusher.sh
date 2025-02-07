@@ -17,6 +17,9 @@ if [ -z "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}" ]; then
   exit 1
 fi
 
+# Install required packages
+apt update && apt install -y curl jq
+
 # Run the loop
 while true; do
   echo Publishing metrics ...
@@ -29,11 +32,8 @@ while true; do
     echo "Error: Failed to fetch Hopr node balances"
   fi
 
-  # Append the new metric entry
-  metrics+="\nhopr_safe_allowance ${hopr_safe_allowance}"
-
   # Push metrics with timeout
-  if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
+  if ! echo "${metrics}\nhopr_safe_allowance ${hopr_safe_allowance}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
     echo "Error: Failed to push metrics to ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"
   fi
   sleep 15

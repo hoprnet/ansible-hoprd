@@ -77,7 +77,7 @@ services:
     labels:
       - "container=nodeexporter"
   metricspusher:
-    image: curlimages/curl:latest
+    image: library/debian:stable-slim
     container_name: metricspusher
     hostname: metricspusher
     command: /bin/sh /app/metricspusher.sh ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}
