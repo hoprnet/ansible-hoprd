@@ -18,7 +18,7 @@ if [ -z "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}" ]; then
 fi
 
 # Install required packages
-apt update && apt install -y curl jq
+apt update && apt install -y curl jq 2>&1 > /dev/null
 
 # Run the loop
 while true; do
@@ -28,13 +28,20 @@ while true; do
     echo "Error: Failed to fetch metrics from Hoprd API"
   fi
 
-  if ! hopr_safe_allowance=$(curl -s --max-time 10 -H 'accept: application/json' -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/account/balances" | jq -r '.safeHoprAllowance'); then
+  if ! account_balance=$(curl -s --max-time 10 -H 'accept: application/json' -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/account/balances"); then
     echo "Error: Failed to fetch Hopr node balances"
   fi
+  safe_allowance=$(echo $account_balance | jq -r '.safeHoprAllowance')
+  safe_balance=$(echo $account_balance | jq -r '.safeHopr')
+
+  # Append the new metric entry
+  metrics+="\nhopr_safe_allowance ${safe_allowance}"
+  metrics+="\nhopr_safe_balance ${safe_balance}"
 
   # Push metrics with timeout
-  if ! echo "${metrics}\nhopr_safe_allowance ${hopr_safe_allowance}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
+  if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
     echo "Error: Failed to push metrics to ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"
   fi
   sleep 15
+
 done
