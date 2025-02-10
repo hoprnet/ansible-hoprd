@@ -18,7 +18,7 @@ if [ -z "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}" ]; then
 fi
 
 # Install required packages
-apt update && apt install -y curl jq 2>&1 > /dev/null
+apt update && apt install -y curl jq > /dev/null 2>&1
 
 # Run the loop
 while true; do
@@ -35,8 +35,8 @@ while true; do
   safe_balance=$(echo $account_balance | jq -r '.safeHopr')
 
   # Append the new metric entry
-  metrics+="\nhopr_safe_allowance ${safe_allowance}"
-  metrics+="\nhopr_safe_balance ${safe_balance}"
+  metrics="${metrics}\nhopr_safe_allowance ${safe_allowance}"
+  metrics="${metrics}\nhopr_safe_balance ${safe_balance}"
 
   # Push metrics with timeout
   if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
