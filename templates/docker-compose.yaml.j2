@@ -35,26 +35,6 @@ services:
       - fluentbit
     labels:
       - "container=hoprd"
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.2
-    container_name: cadvisor
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    privileged: true
-    expose:
-      - 8080
-    ports:
-      - 8080:8080
-    networks:
-      - hoprnet
-    devices:
-      - /dev/kmsg:/dev/kmsg
-    labels:
-      - "container=cadvisor"
   nodeexporter:
     image: prom/node-exporter:v1.8.2
     container_name: nodeexporter

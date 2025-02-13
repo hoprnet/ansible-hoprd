@@ -29,11 +29,6 @@ while true; do
   fi
 
   # Add timeout and retry with backoff
-  if ! cadvisor_metrics=$(curl -s --max-time 10 "http://cadvisor:8080/metrics"); then
-    echo "Error: Failed to fetch cAdvisor metrics"
-  fi
-
-  # Add timeout and retry with backoff
   if ! node_exporter_metrics=$(curl -s --max-time 10 "http://nodeexporter:9100/metrics"); then
     echo "Error: Failed to fetch Node Exporter metrics"
   fi
@@ -48,15 +43,13 @@ while true; do
   metrics="hopr_safe_allowance ${safe_allowance}"
   metrics="${metrics}\nhopr_safe_balance ${safe_balance}"
   metrics="${metrics}\n${hoprd_metrics}"
-  metrics="${metrics}\n${cadvisor_metrics}"
   metrics="${metrics}\n${node_exporter_metrics}"
 
-  echo "${metrics}"
 
   # Push metrics with timeout
   if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
     echo "Error: Failed to push metrics to ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"
   fi
-  sleep 15
+  sleep 14
 
 done
