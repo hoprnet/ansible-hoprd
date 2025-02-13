@@ -24,8 +24,18 @@ apt update && apt install -y curl jq > /dev/null 2>&1
 while true; do
   echo Publishing metrics ...
   # Add timeout and retry with backoff
-  if ! metrics=$(curl -s --max-time 10 -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/node/metrics"); then
-    echo "Error: Failed to fetch metrics from Hoprd API"
+  if ! hoprd_metrics=$(curl -s --max-time 10 -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/node/metrics"); then
+    echo "Error: Failed to fetch Hoprd metrics"
+  fi
+
+  # Add timeout and retry with backoff
+  if ! cadvisor_metrics=$(curl -s --max-time 10 "http://cadvisor:8080/metrics"); then
+    echo "Error: Failed to fetch cAdvisor metrics"
+  fi
+
+  # Add timeout and retry with backoff
+  if ! node_exporter_metrics=$(curl -s --max-time 10 "http://nodeexporter:9100/metrics"); then
+    echo "Error: Failed to fetch Node Exporter metrics"
   fi
 
   if ! account_balance=$(curl -s --max-time 10 -H 'accept: application/json' -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/account/balances"); then
@@ -35,8 +45,13 @@ while true; do
   safe_balance=$(echo $account_balance | jq -r '.safeHopr')
 
   # Append the new metric entry
-  metrics="${metrics}\nhopr_safe_allowance ${safe_allowance}"
+  metrics="hopr_safe_allowance ${safe_allowance}"
   metrics="${metrics}\nhopr_safe_balance ${safe_balance}"
+  metrics="${metrics}\n${hoprd_metrics}"
+  metrics="${metrics}\n${cadvisor_metrics}"
+  metrics="${metrics}\n${node_exporter_metrics}"
+
+  echo "${metrics}"
 
   # Push metrics with timeout
   if ! echo "${metrics}" | curl -s --max-time 10 -u ${HOPRD_PROMETHEUS_PUSHGATEWAY_KEY} --data-binary @- "${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}"; then
