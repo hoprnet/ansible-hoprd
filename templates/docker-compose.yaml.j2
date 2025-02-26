@@ -56,21 +56,23 @@ services:
       - hoprnet
     labels:
       - "container=nodeexporter"
-  metricspusher:
+  metrics:
     image: library/debian:stable-slim
-    container_name: metricspusher
-    hostname: metricspusher
-    command: /bin/sh /app/metricspusher.sh ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}
+    container_name: metrics
+    hostname: metrics
+    command: /bin/sh /app/extendedmetrics.sh
     volumes:
-      - ./metricspusher.sh:/app/metricspusher.sh
+      - ./extendedmetrics.sh:/app/extendedmetrics.sh
     networks:
       - hoprnet
-    env_file:
-      - .env-hoprd
     depends_on:
       - hoprd
     labels:
-      - "container=metricspusher"
+      - "container=metrics"
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
   fluentbit:
     image: cr.fluentbit.io/fluent/fluent-bit:3.0.2 
     container_name: fluentbit
