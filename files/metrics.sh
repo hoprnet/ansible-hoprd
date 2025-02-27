@@ -7,7 +7,7 @@ if [ -z "${HOPRD_API_TOKEN}" ]; then
 fi
 
 # Install required packages
-apt update && apt install -y curl jq netcat-traditional > /dev/null 2>&1
+#apt update && apt install -y curl jq socat > /dev/null 2>&1
 
 # Function to fetch data from Hopr API and format Prometheus metrics
 fetch_hopr_data() {
@@ -26,8 +26,10 @@ fetch_hopr_data() {
   echo -e "hopr_safe_balance ${safe_balance}"
 }
 
-# HTTP server loop (listens on port 8080)
-while true; do
-  # Listen for incoming requests on port 8080
-  echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n$(fetch_hopr_data)" | nc -l -p 8080 -q 1
-done
+
+# Output the headers
+echo "Content-Type: text/plain; charset=utf-8"
+echo ""
+
+# Output the metrics
+echo "$(fetch_hopr_data)"

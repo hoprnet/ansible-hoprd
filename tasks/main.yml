@@ -21,8 +21,8 @@
     - src: "hoprd.service"
       dest: "/etc/systemd/system/hoprd.service"
       mode: "0644"
-    - src: "extendedmetrics.sh"
-      dest: "/opt/hoprd/extendedmetrics.sh"
+    - src: "metrics.sh"
+      dest: "/opt/hoprd/metrics.sh"
       mode: "0774"
   when: item.src is defined and item.src | length > 0
 - name: Get my public IP

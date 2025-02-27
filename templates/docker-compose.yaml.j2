@@ -57,12 +57,12 @@ services:
     labels:
       - "container=nodeexporter"
   metrics:
-    image: library/debian:stable-slim
+    image: library/busybox:latest
     container_name: metrics
     hostname: metrics
-    command: /bin/sh /app/extendedmetrics.sh
+    command: /bin/sh -c "apt update && apt install -y curl jq socat > /dev/null 2>&1 && httpd -f -p 8080 -h /www"
     volumes:
-      - ./extendedmetrics.sh:/app/extendedmetrics.sh
+      - ./metrics.sh:/www/metrics"
     networks:
       - hoprnet
     depends_on:
