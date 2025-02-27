@@ -77,9 +77,9 @@ services:
     labels:
       - "container=metrics"
     expose:
-      - 80
+      - 8080
     ports:
-      - 80:80
+      - 8080:8080
   fluentbit:
     image: cr.fluentbit.io/fluent/fluent-bit:3.0.2 
     container_name: fluentbit
