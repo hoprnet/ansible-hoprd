@@ -67,6 +67,8 @@ services:
       - hoprnet
     depends_on:
       - hoprd
+    env_file:
+        - .env-hoprd
     labels:
       - "container=metrics"
     expose:
