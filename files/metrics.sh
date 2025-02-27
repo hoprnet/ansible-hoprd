@@ -1,13 +1,7 @@
 #!/bin/bash
 
-# Validate required environment variables
-if [ -z "${HOPRD_API_TOKEN}" ]; then
-  echo "Error: HOPRD_API_TOKEN is not set"
-  exit 1
-fi
-
-# Install required packages
-#apt update && apt install -y curl jq socat > /dev/null 2>&1
+# Load environment variables
+export $(grep -v '^#' /etc/environment | xargs)
 
 # Function to fetch data from Hopr API and format Prometheus metrics
 fetch_hopr_data() {
@@ -22,8 +16,8 @@ fetch_hopr_data() {
   safe_balance=$(echo $account_balance | jq -r '.safeHopr')
 
   # Generate Prometheus formatted metrics
-  echo -e "hopr_safe_allowance ${safe_allowance}"
-  echo -e "hopr_safe_balance ${safe_balance}"
+  echo "hopr_safe_allowance ${safe_allowance}"
+  echo "hopr_safe_balance ${safe_balance}"
 }
 
 

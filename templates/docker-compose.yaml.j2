@@ -57,24 +57,29 @@ services:
     labels:
       - "container=nodeexporter"
   metrics:
-    image: library/busybox:latest
+    image: library/debian:bookworm
     container_name: metrics
     hostname: metrics
-    command: /bin/sh -c "apt update && apt install -y curl jq socat > /dev/null 2>&1 && httpd -f -p 8080 -h /www"
+    command: /bin/sh -c "
+      apt update &&
+      apt install -y curl jq lighttpd 2>&1 > /dev/null &&
+      cp /config/lighttpd.conf /etc/lighttpd/lighttpd.conf &&
+      service lighttpd start &&
+      while true; do sleep 10; done" 
     volumes:
-      - ./metrics.sh:/www/metrics"
+      - ./metrics.sh:/var/www/cgi-bin/metrics.sh
+      - ./lighttpd.conf:/config/lighttpd.conf
+      - .env-hoprd:/etc/environment
     networks:
       - hoprnet
     depends_on:
       - hoprd
-    env_file:
-        - .env-hoprd
     labels:
       - "container=metrics"
     expose:
-      - 8080
+      - 80
     ports:
-      - 8080:8080
+      - 80:80
   fluentbit:
     image: cr.fluentbit.io/fluent/fluent-bit:3.0.2 
     container_name: fluentbit
