@@ -33,8 +33,6 @@ How to install Linux
         hoprd_log_max_size: 1000M
         hoprd_resources_memory_requests: 1g
         hoprd_resources_memory_limits: 2g
-        hoprd_prometheus_pushgateway_url: https://prometheus-pushgateway.staging.hoprnet.link/metrics
-        hoprd_prometheus_pushgateway_key: "SomeSecretKey"
 ```
 
 

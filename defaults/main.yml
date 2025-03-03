@@ -14,7 +14,7 @@ hoprd_node_name: my-node
 hoprd_location: worldwide # Set a GCP region
 hoprd_peer_id: unknown
 hoprd_native_address: unknown
-hoprd_prometheus_pushgateway_url:
+
 
 hoprd_config: |
   hopr:

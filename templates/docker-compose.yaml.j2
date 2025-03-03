@@ -56,21 +56,30 @@ services:
       - hoprnet
     labels:
       - "container=nodeexporter"
-  metricspusher:
-    image: library/debian:stable-slim
-    container_name: metricspusher
-    hostname: metricspusher
-    command: /bin/sh /app/metricspusher.sh ${HOPRD_PROMETHEUS_PUSHGATEWAY_URL}
+  metrics:
+    image: library/debian:bookworm
+    container_name: metrics
+    hostname: metrics
+    command: /bin/sh -c "
+      apt update &&
+      apt install -y curl jq lighttpd 2>&1 > /dev/null &&
+      cp /config/lighttpd.conf /etc/lighttpd/lighttpd.conf &&
+      service lighttpd start &&
+      while true; do sleep 10; done" 
     volumes:
-      - ./metricspusher.sh:/app/metricspusher.sh
+      - ./metrics.sh:/var/www/cgi-bin/metrics.sh
+      - ./lighttpd.conf:/config/lighttpd.conf
+      - .env-hoprd:/etc/environment
     networks:
       - hoprnet
-    env_file:
-      - .env-hoprd
     depends_on:
       - hoprd
     labels:
-      - "container=metricspusher"
+      - "container=metrics"
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
   fluentbit:
     image: cr.fluentbit.io/fluent/fluent-bit:3.0.2 
     container_name: fluentbit
