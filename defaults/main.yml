@@ -20,4 +20,10 @@ hoprd_config: |
   hopr:
     chain:
       network: rotsee
-      provider: https://gnosis.rpc-provider.prod.hoprnet.link
+      provider: https://gnosis.drpc.org
+      #provider: https://gnosis-pokt.nodies.app
+      #provider: https://rpc.ankr.com/gnosis
+      #provider: https://gnosis-rpc.publicnode.com
+      #provider: https://endpoints.omniatech.io/v1/gnosis/mainnet/public
+      #provider: https://1rpc.io/gnosis
+      #provider: https://gnosis.oat.farm
