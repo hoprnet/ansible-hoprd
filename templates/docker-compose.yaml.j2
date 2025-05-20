@@ -41,8 +41,6 @@ services:
       - fluentbit
     labels:
       - "container=hoprd"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
   nodeexporter:
     image: prom/node-exporter:v1.8.2
     container_name: nodeexporter
