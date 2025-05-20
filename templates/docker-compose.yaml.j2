@@ -3,6 +3,12 @@ networks:
   hoprnet:
     name: hoprnet
     driver: bridge
+    ipam:
+      driver: default
+      config: 
+        - subnet: 172.30.0.0/16
+          ip_range: 172.30.5.0/24
+          gateway: 172.30.0.1
 services:
   hoprd:
     image: europe-west3-docker.pkg.dev/hoprassociation/docker-images/hoprd:${HOPRD_VERSION}
