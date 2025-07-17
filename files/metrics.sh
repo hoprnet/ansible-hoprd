@@ -5,15 +5,15 @@ export $(grep -v '^#' /etc/environment | xargs)
 
 # Function to fetch data from Hopr API and format Prometheus metrics
 fetch_hopr_data() {
-  account_balance=$(curl -s --max-time 10 -H 'accept: application/json' -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v3/account/balances")
+  account_balance=$(curl -s --max-time 10 -H 'accept: application/json' -H "X-Auth-Token: ${HOPRD_API_TOKEN}" "http://hoprd:3001/api/v4/account/balances")
   if [ $? -ne 0 ]; then
     echo "Error: Failed to fetch Hopr node balances"
     exit 1
   fi
 
   # Extract values
-  safe_allowance=$(echo $account_balance | jq -r '.safeHoprAllowance')
-  safe_balance=$(echo $account_balance | jq -r '.safeHopr')
+  safe_allowance=$(echo $account_balance | jq -r '.safeHoprAllowance' | sed 's/ wxHOPR//')
+  safe_balance=$(echo $account_balance | jq -r '.safeHopr' | sed 's/ wxHOPR//')
 
   # Generate Prometheus formatted metrics
   echo "hopr_safe_allowance ${safe_allowance}"
