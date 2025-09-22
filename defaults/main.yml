@@ -17,8 +17,11 @@ hoprd_native_address: unknown
 hoprd_provider: https://gnosis.drpc.org
 hoprd_logs_enable: "false"
 hoprd_logs_url: "https://logs-snapshots-rotsee.hoprnet.org/rotsee-v3.0-latest.tar.xz"
-
 hoprd_config: |
   hopr:
     chain:
       network: rotsee
+hoprd_fluentbit_ca_file: ""
+hoprd_fluentbit_crt_file: ""
+hoprd_fluentbit_key_file: ""
+hoprd_fluentbit_graylog_host: ""

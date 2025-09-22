@@ -35,7 +35,8 @@ services:
     env_file:
         - .env-hoprd
     volumes:
-      - '/opt/hoprd:/app'
+      - './config:/app/config:ro'
+      - './data:/app/data'
       - '/var/run/docker.sock:/var/run/docker.sock'
     depends_on:
       - fluentbit
@@ -73,9 +74,9 @@ services:
       service lighttpd start &&
       while true; do sleep 10; done" 
     volumes:
-      - ./metrics.sh:/var/www/cgi-bin/metrics.sh
-      - ./lighttpd.conf:/config/lighttpd.conf
-      - .env-hoprd:/etc/environment
+      - ./metrics/metrics.sh:/var/www/cgi-bin/metrics.sh
+      - ./metrics/lighttpd.conf:/config/lighttpd.conf
+      - ./.env-hoprd:/etc/environment
     networks:
       - hoprnet
     depends_on:
@@ -97,8 +98,7 @@ services:
     volumes:
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"  # Mount Docker logs
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./fluent-bit-gcp-sa.json:/var/secrets/google/google-fluentbit-sa.json:ro"
-      - "./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro"
+      - "./fluentbit:/fluent-bit/etc"
     networks:
       - hoprnet
     ports:
