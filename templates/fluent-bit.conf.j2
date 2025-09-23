@@ -63,14 +63,14 @@
 [FILTER]
     Name   lua
     Match  docker.*
-    Script /fluent-bit/truncate.lua  
+    Script /fluent-bit/scripts/truncate.lua  
     Call   truncate_message
 
 # Flatten spans array
 [FILTER]
     Name   lua
     Match  docker.*
-    Script /fluent-bit/flatten_spans.lua
+    Script /fluent-bit/scripts/flatten_spans.lua
     Call   flatten_spans_fields
 
 # Rename fields
@@ -97,9 +97,10 @@
     tls                 On
     tls.verify          On
     tls.debug           4
-    tls.ca_file         /fluent-bit/etc/ca.crt
-    tls.crt_file        /fluent-bit/etc/tls.crt
-    tls.key_file        /fluent-bit/etc/tls.key
-[OUTPUT]
-   Name       stdout
-   Match      docker.*
+    tls.ca_file         /fluent-bit/ssl/ca.crt
+    tls.crt_file        /fluent-bit/ssl/tls.crt
+    tls.key_file        /fluent-bit/ssl/tls.key
+
+# [OUTPUT]
+#    Name       stdout
+#    Match      docker.*

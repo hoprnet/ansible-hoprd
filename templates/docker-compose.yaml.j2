@@ -98,7 +98,9 @@ services:
     volumes:
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"  # Mount Docker logs
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./fluentbit:/fluent-bit/etc"
+      - "./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro"
+      - "./fluentbit/ssl:/fluent-bit/ssl:ro"
+      - "./fluentbit/scripts:/fluent-bit/scripts"
     networks:
       - hoprnet
     ports:
