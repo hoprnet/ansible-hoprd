@@ -79,6 +79,7 @@
     Match   docker.*
     Add     namespace {{ hoprd_namespace }}
     Add     hoprd_node_name {{ hoprd_node_name }}
+    Add     host {{ hoprd_node_name }}
     Add     docker_image_tag {{ hoprd_version }}
     Add     label_instance {{ hoprd_node_name }}
     Add     label_network {{ hoprd_network }}
