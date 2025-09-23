@@ -1,9 +1,15 @@
 ---
 - name: Create app directory
   ansible.builtin.file:
-    path: "{{ hoprd_path }}/hoprd-db"
+    path: "{{ item }}"
     state: directory
     mode: 0777
+  with_items:
+    - "{{ hoprd_path }}/config"
+    - "{{ hoprd_path }}/metrics"
+    - "{{ hoprd_path }}/fluentbit/ssl"
+    - "{{ hoprd_path }}/fluentbit/scripts"
+    - "{{ hoprd_path }}/data"
 - name: "Copy files"
   ansible.builtin.copy:
     src: "{{ item.src }}"
@@ -13,19 +19,31 @@
     mode: "{{ item.mode }}"
   with_items:
     - src: "{{ hoprd_identity_file }}"
-      dest: "{{ hoprd_path }}/.hoprd.id"
+      dest: "{{ hoprd_path }}/config/.hoprd.id"
       mode: "600"
-    - src: "{{ hoprd_fluentbit_sa_file }}"
-      dest: "{{ hoprd_path }}/fluent-bit-gcp-sa.json"
+    - src: "{{ hoprd_fluentbit_ca_file }}"
+      dest: "{{ hoprd_path }}/fluentbit/ssl/ca.crt"
       mode: "600"
+    - src: "{{ hoprd_fluentbit_crt_file }}"
+      dest: "{{ hoprd_path }}/fluentbit/ssl/tls.crt"
+      mode: "600"
+    - src: "{{ hoprd_fluentbit_key_file }}"
+      dest: "{{ hoprd_path }}/fluentbit/ssl/tls.key"
+      mode: "600"
+    - src: "flatten_spans.lua"
+      dest: "{{ hoprd_path }}/fluentbit/scripts/flatten_spans.lua"
+      mode: "755"
+    - src: "truncate.lua"
+      dest: "{{ hoprd_path }}/fluentbit/scripts/truncate.lua"
+      mode: "755"
     - src: "hoprd.service"
       dest: "/etc/systemd/system/hoprd.service"
       mode: "0644"
     - src: "metrics.sh"
-      dest: "/opt/hoprd/metrics.sh"
+      dest: "/opt/hoprd/metrics/metrics.sh"
       mode: "0774"
     - src: "lighttpd.conf"
-      dest: "/opt/hoprd/lighttpd.conf"
+      dest: "/opt/hoprd/metrics/lighttpd.conf"
       mode: "0644"
   when: item.src is defined and item.src | length > 0
 - name: Get my public IP
@@ -42,7 +60,7 @@
       dest: "{{ hoprd_path }}/docker-compose.yaml"
       mode: "0640"
     - src: hoprd.cfg.yaml.j2
-      dest: "{{ hoprd_path }}/hoprd.cfg.yaml"
+      dest: "{{ hoprd_path }}/config/hoprd.cfg.yaml"
       mode: "0640"
     - src: .env.j2
       dest: "{{ hoprd_path }}/.env"
@@ -51,7 +69,7 @@
       dest: "{{ hoprd_path }}/.env-hoprd"
       mode: "0640"
     - src: fluent-bit.conf.j2
-      dest: "{{ hoprd_path }}/fluent-bit.conf"
+      dest: "{{ hoprd_path }}/fluentbit/fluent-bit.conf"
       mode: "0640"
 - name: reload systemctl
   ansible.builtin.systemd:

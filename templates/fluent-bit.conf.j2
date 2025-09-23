@@ -22,70 +22,85 @@
     Match       docker.*
     Remove_Key  stream
     Remove_Key  time
-# Parse logs as json
+
+# Parser filter as JSON object from json_log attribute
 [FILTER]
     Name         parser
     Match        docker.*
     Key_Name     log
     Parser       json
     Reserve_Data On
-# Filter by logs emitted by hoprd
+
+# Filter by logs emitted by hoprd containers only
 [FILTER]
     Name   grep
     Match  docker.*
     Regex  threadId .*
-# Exclude verbose entry logs
+
+# Extract hoprd custom fields using prefix field_*
+[FILTER]
+    Name nest
+    Match docker.*
+    Operation lift
+    Add_prefix field_
+    Nested_under fields
+
+# Exclude empty messages
 [FILTER]
     Name         grep
     Match        docker.*
-    Exclude      log \/healthyz
-    Exclude      log \/readyz
-    Exclude      log \/api\/v3\/node\/metrics
-    Exclude      log \/api\/v3\/messages\/peek-all
-# Limit the amount of messages to 20 lines per 10 seconds per node
-[FILTER]
-    Name         throttle
-    Match        docker.*
-    Rate         20 # Amount of messages for the time interval.
-    Window       6 # Amount of intervals to calculate average over
-    Interval     10s
-# Nest fields
+    Regex        field_message .+
+
+# Extract span fields using prefix span_*
 [FILTER]
     Name nest
-    Match *
+    Match docker.*
     Operation lift
-    Add_prefix fields_
-    Nested_under fields
+    Add_prefix span_
+    Nested_under span
+
+# Truncate message to 250 characters
 [FILTER]
-    Name modify
-    Match *
-    Rename fields_message message
+    Name   lua
+    Match  docker.*
+    Script /fluent-bit/scripts/truncate.lua  
+    Call   truncate_message
+
+# Flatten spans array
 [FILTER]
-    Name nest
-    Match *
-    Operation nest
-    Wildcard fields_*
-    Remove_prefix fields_
-    Nest_under fields
-# Remove unnecessary fields
+    Name   lua
+    Match  docker.*
+    Script /fluent-bit/scripts/flatten_spans.lua
+    Call   flatten_spans_fields
+
+# Rename fields
 [FILTER]
-    Name         record_modifier
-    Match        docker.*
-    Remove_Key   timestamp
+    Name    modify
+    Match   docker.*
+    Add     namespace {{ hoprd_namespace }}
+    Add     hoprd_node_name {{ hoprd_node_name }}
+    Add     docker_image_tag {{ hoprd_version }}
+    Add     label_instance {{ hoprd_node_name }}
+    Add     label_network {{ hoprd_network }}
+    Add     label_peerId {{ hoprd_peer_id }}
+    Add     label_nativeAddress {{ hoprd_native_address }}
+    Rename  level severity
+    Remove  spans
 
 [OUTPUT]
-    Name       stackdriver
-    Match      docker.*
-    Resource     generic_node
-    Namespace    gnosisvpn
-    Location     {{ hoprd_location }}
-    Node_Id      {{ hoprd_node_name }}
-    Google_Service_Credentials /var/secrets/google/google-fluentbit-sa.json
-    Log_Name_Key     horpd-logs
-    export_to_project_id {{ hoprd_log_explorer_project_id }}
-    project_id_key {{ hoprd_log_explorer_project_id }}
-    labels_key labels
-    severity_key level
-#[OUTPUT]
+    Name                gelf
+    Match               docker.*
+    Host                {{ hoprd_fluentbit_graylog_host }}
+    Port                12201
+    Mode                tcp
+    Gelf_Timestamp_Key  date
+    tls                 On
+    tls.verify          On
+    tls.debug           4
+    tls.ca_file         /fluent-bit/ssl/ca.crt
+    tls.crt_file        /fluent-bit/ssl/tls.crt
+    tls.key_file        /fluent-bit/ssl/tls.key
+
+# [OUTPUT]
 #    Name       stdout
 #    Match      docker.*
