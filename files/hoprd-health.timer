@@ -1,0 +1,12 @@
+[Unit]
+Description=Check Hoprd health every minute
+After=docker.service
+Requires=docker.service
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=60s
+Unit=hoprd-health.service
+
+[Install]
+WantedBy=timers.target

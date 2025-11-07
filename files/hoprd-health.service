@@ -1,0 +1,20 @@
+[Unit]
+Description=Hoprd node healthcheck
+After=docker.service
+Requires=docker.service
+
+[Service]
+User=root
+Group=root
+Type=oneshot
+ExecStart=/bin/bash -c '\
+  status=$(docker inspect --format="{{.State.Health.Status}}" hoprd 2>/dev/null); \
+  if [ "$status" != "healthy" ]; then \
+    echo "[$(date)] hoprd unhealthy: $status — restarting container"; \
+    service hoprd restart; \
+  else \
+    echo "[$(date)] hoprd healthy"; \
+  fi'
+
+[Install]
+WantedBy=multy-user.target
