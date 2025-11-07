@@ -85,3 +85,8 @@
     name: "hoprd.service"
     state: restarted
     enabled: true
+- name: Start Hoprd health check timer
+  ansible.builtin.service:
+    name: "hoprd-health.timer"
+    state: started
+    enabled: true
