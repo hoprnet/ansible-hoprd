@@ -39,6 +39,12 @@
     - src: "hoprd.service"
       dest: "/etc/systemd/system/hoprd.service"
       mode: "0644"
+    - src: "hoprd-health.service"
+      dest: "/etc/systemd/system/hoprd-health.service"
+      mode: "0644"
+    - src: "hoprd-health.timer"
+      dest: "/etc/systemd/system/hoprd-health.timer"
+      mode: "0644"
     - src: "metrics.sh"
       dest: "/opt/hoprd/metrics/metrics.sh"
       mode: "0774"
@@ -78,4 +84,9 @@
   ansible.builtin.service:
     name: "hoprd.service"
     state: restarted
+    enabled: true
+- name: Start Hoprd health check timer
+  ansible.builtin.service:
+    name: "hoprd-health.timer"
+    state: started
     enabled: true
