@@ -11,10 +11,10 @@ ExecStart=/bin/bash -c '\
   status=$(docker inspect --format="{{.State.Health.Status}}" hoprd 2>/dev/null); \
   if [ "$status" == "unhealthy" ]; then \
     echo "[$(date)] hoprd unhealthy: $status — restarting container"; \
-    service hoprd restart; \
+    systemctl restart hoprd.service; \
   else \
     echo "[$(date)] hoprd healthy"; \
   fi'
 
 [Install]
-WantedBy=multy-user.target
+WantedBy=multi-user.target
