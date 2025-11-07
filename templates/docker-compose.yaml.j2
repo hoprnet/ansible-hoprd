@@ -42,6 +42,13 @@ services:
       - fluentbit
     labels:
       - "container=hoprd"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs -H 'X-Auth-Token: $HOPRD_API_TOKEN' http://localhost:3001/healthyz || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      # 15 minutes: Emulates the startupProbe when the node is not synced yet
+      start_period: 900s
   nodeexporter:
     image: prom/node-exporter:v1.8.2
     container_name: nodeexporter
