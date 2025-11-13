@@ -31,6 +31,8 @@ services:
       - 9091:9091/udp
       - ${HOPRD_SESSION_PORT_RANGE}:${HOPRD_SESSION_PORT_RANGE}/tcp
       - ${HOPRD_SESSION_PORT_RANGE}:${HOPRD_SESSION_PORT_RANGE}/udp
+      - {{ hoprd_debug_port }}:{{ hoprd_debug_port }}/tcp
+      - {{ hoprd_debug_port }}:{{ hoprd_debug_port }}/udp
       - 3001:3001
     env_file:
         - .env-hoprd

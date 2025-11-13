@@ -5,6 +5,7 @@ hoprd_version: latest
 hoprd_network: rotsee
 hoprd_session_port_start: 1422
 hoprd_session_port_end: 1422
+hoprd_debug_port: 10000
 hoprd_log_level: "info,libp2p_swarm=info,libp2p_mplex=info,multistream_select=info,isahc=error,sea_orm=warn,sqlx=warn,hyper_util=warn,libp2p_tcp=info,libp2p_dns=info,hickory_resolver=warn"
 hoprd_log_max_size: 1000M
 hoprd_resources_memory_requests: 1g
