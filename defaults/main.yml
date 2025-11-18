@@ -25,3 +25,4 @@ hoprd_fluentbit_ca_file: ""
 hoprd_fluentbit_crt_file: ""
 hoprd_fluentbit_key_file: ""
 hoprd_fluentbit_graylog_host: ""
+hoprd_extra_env_vars: {}
