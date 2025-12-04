@@ -7,14 +7,15 @@
     HTTP_Listen 0.0.0.0
     HTTP_Port 2020
     Health_Check On
-[INPUT]
-    Name        tail
-    Path        /var/lib/docker/containers/*/*.log
-    Parser      docker
-    Tag         docker.*
-    DB          /var/log/fluent-bit-k8s-container.db
-    Mem_Buf_Limit 20MB
-    Skip_Long_Lines On
+# [INPUT]
+#     Name        tail
+#     Path        /var/lib/docker/containers/*/*.log
+#     Parser      docker
+#     Tag         docker.*
+#     DB          /var/log/fluent-bit-k8s-container.db
+#     Mem_Buf_Limit 20MB
+#     Skip_Long_Lines On
+
 [INPUT]
     Name   forward
     Listen 0.0.0.0
