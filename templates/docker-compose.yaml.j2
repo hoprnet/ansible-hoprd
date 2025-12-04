@@ -49,6 +49,11 @@ services:
       retries: 3
       # 15 minutes: Emulates the startupProbe when the node is not synced yet
       start_period: 900s
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: hoprd.${HOSTNAME}
   nodeexporter:
     image: prom/node-exporter:v1.8.2
     container_name: nodeexporter
@@ -113,6 +118,7 @@ services:
     ports:
       - "2020:2020"
       - "2021:2021"
+      - "24224:24224"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/var/secrets/google/google-fluentbit-sa.json
     restart: always
