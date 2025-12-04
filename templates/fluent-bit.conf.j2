@@ -15,18 +15,23 @@
     DB          /var/log/fluent-bit-k8s-container.db
     Mem_Buf_Limit 20MB
     Skip_Long_Lines On
+[INPUT]
+    Name   forward
+    Listen 0.0.0.0
+    Port   24224
+    Tag    hoprd.*
 
 # Remove stream and time keys
 [FILTER]
     Name        record_modifier
-    Match       docker.*
+    Match       hoprd.*
     Remove_Key  stream
     Remove_Key  time
 
 # Parser filter as JSON object from json_log attribute
 [FILTER]
     Name         parser
-    Match        docker.*
+    Match        hoprd.*
     Key_Name     log
     Parser       json
     Reserve_Data On
@@ -34,13 +39,13 @@
 # Filter by logs emitted by hoprd containers only
 [FILTER]
     Name   grep
-    Match  docker.*
+    Match  hoprd.*
     Regex  threadId .*
 
 # Extract hoprd custom fields using prefix field_*
 [FILTER]
     Name nest
-    Match docker.*
+    Match hoprd.*
     Operation lift
     Add_prefix field_
     Nested_under fields
@@ -48,13 +53,13 @@
 # Exclude empty messages
 [FILTER]
     Name         grep
-    Match        docker.*
+    Match        hoprd.*
     Regex        field_message .+
 
 # Extract span fields using prefix span_*
 [FILTER]
     Name nest
-    Match docker.*
+    Match hoprd.*
     Operation lift
     Add_prefix span_
     Nested_under span
@@ -62,21 +67,21 @@
 # Truncate message to 250 characters
 [FILTER]
     Name   lua
-    Match  docker.*
+    Match  hoprd.*
     Script /fluent-bit/scripts/truncate.lua  
     Call   truncate_message
 
 # Flatten spans array
 [FILTER]
     Name   lua
-    Match  docker.*
+    Match  hoprd.*
     Script /fluent-bit/scripts/flatten_spans.lua
     Call   flatten_spans_fields
 
 # Rename fields
 [FILTER]
     Name    modify
-    Match   docker.*
+    Match   hoprd.*
     Add     namespace {{ hoprd_namespace }}
     Add     hoprd_node_name {{ hoprd_node_name }}
     Add     host {{ hoprd_node_name }}
@@ -90,7 +95,7 @@
 
 [OUTPUT]
     Name                gelf
-    Match               docker.*
+    Match               hoprd.*
     Host                {{ hoprd_fluentbit_graylog_host }}
     Port                12201
     Mode                tcp
@@ -104,4 +109,4 @@
 
 # [OUTPUT]
 #    Name       stdout
-#    Match      docker.*
+#    Match      hoprd.*
