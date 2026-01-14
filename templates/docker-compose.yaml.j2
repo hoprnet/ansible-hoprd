@@ -43,7 +43,7 @@ services:
     labels:
       - "container=hoprd"
     healthcheck:
-      test: ["CMD-SHELL", "curl -fs -H 'X-Auth-Token: $HOPRD_API_TOKEN' http://localhost:3001/healthyz || exit 1"]
+      test: ["CMD-SHELL", "curl -fs -H 'X-Auth-Token: $$HOPRD_API_TOKEN' http://localhost:3001/healthyz || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -53,8 +53,7 @@ services:
       driver: fluentd
       options:
         fluentd-address: 127.0.0.1:24224
-        fluentd-async-connect: "true"
-        tag: hoprd.${HOSTNAME}
+        tag: hoprd.{{ hoprd_node_name }}
   nodeexporter:
     image: prom/node-exporter:v1.8.2
     container_name: nodeexporter

@@ -90,3 +90,4 @@
     name: "hoprd-health.timer"
     state: started
     enabled: true
+  when: hoprd_healthcheck_enabled
