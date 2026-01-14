@@ -53,6 +53,7 @@ services:
       driver: fluentd
       options:
         fluentd-address: 127.0.0.1:24224
+        fluentd-async-connect: "true"
         tag: hoprd.${HOSTNAME}
   nodeexporter:
     image: prom/node-exporter:v1.8.2
@@ -123,10 +124,3 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/var/secrets/google/google-fluentbit-sa.json
     restart: always
     user: root
-    healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 24224 || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-    labels:
-      - "container=fluentbit"
