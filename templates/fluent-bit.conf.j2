@@ -94,9 +94,41 @@
     Rename  level severity
     Remove  spans
 
+# Routing: Split logs into "debug" pipeline or "output" pipeline
+# If DEBUG, send to debug pipeline (debug.kube.*) and discard original
+# If NOT DEBUG, send directly to output (output.kube.*) and discard original
+[FILTER]
+    Name          rewrite_tag
+    Match         hoprd.*
+    Rule          severity ^(DEBUG)$ debug.$TAG false
+    Rule          severity ^(?!DEBUG).*$ output.$TAG false
+    Emitter_Name  re_emitted_logs
+
+# Pipeline: Rate limit DEBUG logs
+# - Rate:     6000 logs allowed per Interval.
+# - Interval: 1m (1 minute). The base unit of time.
+# - Window:   10 (intervals). The sliding window size.
+#
+# Result:
+# This limits DEBUG logs to an average of 6000 logs/10minute calculated over a 10-minute sliding window (Window * Interval). Equivalent to aprox 10 logs/second.
+# Burst capability is determined by the Window size, smoothing out spikes.
+[FILTER]
+    Name     throttle
+    Match    debug.hoprd.*
+    Rate     6000
+    Window   10
+    Interval 1m
+    Print_Status true
+
+# Routing: Send finished DEBUG logs to Output
+[FILTER]
+    Name          rewrite_tag
+    Match         debug.hoprd.*
+    Rule          severity .* output.$TAG true
+
 [OUTPUT]
     Name                gelf
-    Match               hoprd.*
+    Match               output.*
     Host                {{ hoprd_fluentbit_graylog_host }}
     Port                12201
     Mode                tcp
