@@ -105,19 +105,27 @@
     Emitter_Name  re_emitted_logs
 
 # Pipeline: Rate limit DEBUG logs
-# - Rate:     600 logs allowed per Interval.
-# - Interval: 1m (1 minute). The base unit of time.
-# - Window:   10 (intervals). The sliding window size.
+# - Rate:     150 logs allowed per Interval.
+# - Interval: 15s (15 seconds). The base unit of time.
+# - Window:   8 (intervals). The sliding window size.
 #
 # Result:
-# This limits DEBUG logs to an average of 600 logs/minute calculated over a 10-minute sliding window (Window * Interval). Equivalent to aprox 10 logs/second.
+# This limits DEBUG logs to an average of 150 logs per 15 seconds calculated over a 8 sliding window (Window * Interval). Equivalent to aprox 10 logs/second.
 # Burst capability is determined by the Window size, smoothing out spikes.
 [FILTER]
     Name     throttle
     Match    debug.hoprd.*
-    Rate     600
-    Window   10
-    Interval 1m
+    Rate     150 # Rate limit to 150 logs per Interval = 10 logs/second
+    Window   8  # Window of 2 minutes = 8 intervals of 15s
+    Interval 15s
+    Print_Status true
+
+[FILTER]
+    Name     throttle
+    Match    output.*
+    Rate     150 # Rate limit to 150 logs per Interval = 10 logs/second
+    Window   8 # Window of 2 minutes = 8 intervals of 15s
+    Interval 15s
     Print_Status true
 
 # Routing: Send finished DEBUG logs to Output
