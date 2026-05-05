@@ -3,7 +3,7 @@ name: Bump Version on PR Merge
 on:
   push:
     branches:
-      - master
+      - main
 
 permissions:
   contents: write
