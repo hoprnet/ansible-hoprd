@@ -5,20 +5,26 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  actions: write
+permissions: {}
 
 jobs:
   bump-version:
     runs-on: depot-ubuntu-24.04
+    permissions:
+      contents: write
+      actions: write
     steps:
       - name: Check out repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Bump and tag version
         run: |
-          IFS='.' read -r major minor patch <<< "${{ vars.ANSIBLE_ROLE_VERSION }}"
+          CURRENT_VERSION="${CURRENT_VERSION#v}"
+          if [[ ! "$CURRENT_VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Invalid ANSIBLE_ROLE_VERSION: $CURRENT_VERSION" >&2
+            exit 1
+          fi
+          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
           new_patch=$((patch + 1))
           new_version="$major.$minor.$new_patch"
           echo "New version: $new_version"
@@ -26,5 +32,6 @@ jobs:
           git tag "v${new_version}"
           git push origin "v${new_version}"
         env:
+          CURRENT_VERSION: ${{ vars.ANSIBLE_ROLE_VERSION }}
           GH_TOKEN: ${{ secrets.GH_RUNNER_TOKEN }}
 
